@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap" rel="stylesheet">
+    <title>discoverfy</title>
+    <style>
+        /* CSS for suggestion box */
+        .suggestion {
+            cursor: pointer;
+            padding: 5px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+
+        .suggestion:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+<div id="title-page">
+    <h1>discoverfy</h1>
+    <img src="/static/spotify-removebg-preview.png">
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) { 
+  // Simulate loading time
+  setTimeout(function() {
+    // Hide the loader and show the main content
+    document.getElementById('title-page').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+  }, 3000); // Adjust the timeout as needed
+});
+
+    </script>
+</div>
+<div id = "main-content">
+
+<div class="description">
+    <p>Enter any genre or select one from the list to find an underground artist from the given genre.</p>
+</div>
+
+<form action="/get_artist" method="post">
+    <h1>discoverfy</h1>
+    <label for="genre">Enter a music genre:</label><br>
+    <input type="text" id="genre" name="genre"><br><br>
+    <input type="submit" value="Find Artist">
+</form>
+<div class="dropdown">
+
+<h2>Select a Genre</h2>
+<select id="genreDropdown"onchange="showSubgenres()">
+  <option value="">Select Genre</option>
+</select>
+
+
+<script>
+    //get from txt file
+    function populateGenres() {
+        fetch('/static/genres.txt')
+            .then(response => response.text())
+            .then(data => {
+                const genresDropdown = document.getElementById('genreDropdown');
+                const lines = data.split('\n');
+                let currentParentGenre = null;
+
+                lines.forEach(line => {
+                    if (line.trim() !== '') {
+                        if (!line.startsWith(' ')) {
+                            // This is a parent genre
+                            const optgroup = document.createElement('optgroup');
+                            optgroup.label = line.trim();
+                            currentParentGenre = optgroup;
+                            genresDropdown.appendChild(optgroup);
+                        } else {
+                            // This is a subgenre
+                            if (currentParentGenre) {
+                                const option = document.createElement('option');
+                                option.textContent = line.trim();
+                                option.value = line.trim();
+                                currentParentGenre.appendChild(option);
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching genres:', error);
+            });
+    }
+
+    
+    function showSubgenres() {
+        const parentGenre = document.getElementById('genreDropdown').value;
+        document.getElementById('genre').value = parentGenre;
+
+    }
+
+    
+    window.onload = populateGenres;
+</script>
+</div>
+</div>
+</html>

@@ -1,0 +1,3 @@
+{
+    "packages": ["os","base64","requests","pyodide","flask","render_template","request"]
+}
